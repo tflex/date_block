@@ -1,0 +1,109 @@
+<?php
+
+/**
+ * @file
+ * This module creates a block which displays the current system date/time.
+ */
+
+
+/**
+ * Implements hook_help().
+ */
+function date_block_help($path, $arg) {
+  $output = '';
+  switch ($path) {
+    case 'admin/help#date_block':
+      $output = '';
+      $output .= '<h3>' . t('Date Block') . '</h3>';
+      $output .= '<p>' . t('This module creates a block which displays the current system date/time. The formatting for the date can be edited using standard PHP Date Formatting and can be changed by configuring the block settings page found at');
+      $output .= " <strong>/admin/structure/block/manage/date_block/date_block/configure</strong> ";
+      $output .= t('. More information on PHP date format options can be found at');
+      $output .= ' <a href="http://php.net/manual/function.date.php" target="_blank">http://php.net/manual/function.date.php</a>.<p>';
+
+  }
+
+  return $output;
+}
+
+
+/**
+ * Implements hook_permission().
+ */
+function date_block_permission() {
+  return array(
+    'administer date block' => array(
+      'title' => t('Administer date block'),
+      'description' => t('Update the date format in the date block.'),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_block_info().
+ */
+function date_block_block_info() {
+  $blocks = array();
+
+  $blocks['date_block'] = array(
+    'info' => t('Date Block'),
+    'cache' => DRUPAL_CACHE_CUSTOM,
+  );
+
+  return $blocks;
+}
+
+
+/**
+ * Implements hook_block_view().
+ */
+function date_block_block_view($delta = '') {
+  $block = array();
+
+  $block['subject'] = NULL;
+  $block['content'] = _date_block_content();
+
+  return $block;
+}
+
+
+/**
+ * Implements hook_block_configure().
+ */
+function date_block_block_configure($delta = '') {
+  $form = array();
+
+  $form['date_block_default_format'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Date Format'),
+    '#description' => t('Enter a user-defined date format. See the !url for available options.', array('!url' => l(t('PHP manual'), 'http://php.net/manual/function.date.php'))),
+    '#default_value' => variable_get('date_block_default_format', ''),
+    '#required' => TRUE,
+  );
+
+  return $form;
+}
+
+
+/**
+ * Implements hook_block_save().
+ */
+function date_block_block_save($delta = '', $edit = array()) {
+
+  variable_set('date_block_default_format', $edit['date_block_default_format']);
+
+}
+
+
+/**
+ * Theme output.
+ */
+function _date_block_content() {
+  $date_format = variable_get('date_block_default_format');
+  $date_format = !empty($date_format) ? $date_format : 'F j, Y';
+  $date_output = '<span class="date-block-date">';
+  $date_output .= date($date_format);
+  $date_output .= '</span>';
+
+  return $date_output;
+}

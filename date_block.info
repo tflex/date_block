@@ -1,0 +1,6 @@
+name = "Date Block"
+description = "Display current system date/time in a block"
+dependencies[] = date
+package = "Custom"
+configure = admin/config/date_block
+core = 7.x

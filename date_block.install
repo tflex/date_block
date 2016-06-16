@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Installation file for the Date Block module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function date_block_install() {
+
+  // Set initial values.
+  variable_set("date_block_default_format", "F j, Y");
+}
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function date_block_uninstall() {
+  variable_del('date_block_default_format');
+}
